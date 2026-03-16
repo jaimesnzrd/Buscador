@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "buscador-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/buscador/BuscadorWebPart.js",
+          "manifest": "./src/webparts/buscador/BuscadorWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "BuscadorWebPartStrings": "lib/webparts/buscador/loc/{locale}.js"
+  }
+}

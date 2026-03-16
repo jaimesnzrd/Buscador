@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "webpart-buscador-client-side-solution",
+    "id": "090cd20b-0df2-445f-841d-7c60f608d6de",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.22.2"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "webpartBuscador description"
+      },
+      "longDescription": {
+        "default": "webpartBuscador description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "webpart-buscador Feature",
+        "description": "The feature that activates elements of the webpart-buscador solution.",
+        "id": "ca52f41f-5089-41f7-8864-b6583f00845c",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/webpart-buscador.sppkg"
+  }
+}

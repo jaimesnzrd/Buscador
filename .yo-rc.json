@@ -1,0 +1,19 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "useGulp": false,
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "22.22.0",
+    "sdksVersions": {},
+    "version": "1.22.2",
+    "libraryName": "webpart-buscador",
+    "libraryId": "090cd20b-0df2-445f-841d-7c60f608d6de",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "webpartBuscador",
+    "solutionShortDescription": "webpartBuscador description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}
