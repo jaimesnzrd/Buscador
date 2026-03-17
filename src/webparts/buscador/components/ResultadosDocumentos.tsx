@@ -62,7 +62,16 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
             <strong style={{ color: '#ed1e40' }}>{r.Title?.replace(/_/g, ' ')}</strong>
           </div>
 
-          {/* Fecha y tipo de documento en horizontal */}
+          {/* Ruta por carpetas */}
+          {r.Path && (
+            <div style={{ fontSize: 12, color: '#333333', marginTop: 4 }}>
+              {r.Path
+                .split('/') // separa por /
+                .slice(r.Path.split('/').indexOf('DocsBuscador') + 1, r.Path.split('/').length - 1) // desde DocsBuscador hasta antes del archivo
+                .slice(0, 3) // solo los 3 primeros niveles
+                .join(' > ')} {/* separador */}
+            </div>
+          )}
           
 
           {/* Vista previa clicable si hay path */}
