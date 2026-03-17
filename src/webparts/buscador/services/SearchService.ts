@@ -53,7 +53,7 @@ export class SearchService {
       if (filtros.texto?.length) kql += ` AND (${filtros.texto.join(" OR ")})`;
       if (filtros.titulo?.length) kql += ` AND (${filtros.titulo.join(" OR ")})`;
       if (filtros.tipoArchivo?.length) kql += ` AND FileExtension:(${filtros.tipoArchivo.join(" OR ")})`;
-      if (filtros.autor?.length) kql += ` AND Author:(${filtros.autor.join(" OR ")})`;
+      if (filtros.autor?.length) kql += ` AND CreatedBy:(${filtros.autor.join(" OR ")})`;
       if (filtros.carpeta) kql += ` AND Path:${filtros.carpeta}`;
       if (filtros.fechaDesde) kql += ` AND Created>=${filtros.fechaDesde.toISOString()}`;
       if (filtros.fechaHasta) kql += ` AND Created<=${filtros.fechaHasta.toISOString()}`;

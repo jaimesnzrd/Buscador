@@ -89,7 +89,7 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
         {
           texto: filtroTexto,
           tipoArchivo: filtroTipoArchivo,
-          autor: filtroAutor,
+          autor: filtroCreatedBy,
           carpeta: filtroCarpeta,
           titulo: filtroTitulo ? [filtroTitulo] : [],
           fechaDesde: filtroFechaDocsDesde,
