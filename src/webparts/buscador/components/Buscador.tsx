@@ -49,8 +49,8 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
   const [modalTipo, setModalTipo] = useState('');
   const [modalTitle, setModalTitle] = useState('');
 
-  // Función para limpiar filtros
-  const limpiarFiltros = () => {
+  // Función para borrar filtros
+  const borrarFiltros = () => {
     setFiltroTitulo('');
     setFiltroCreatedBy([]);
     setFiltroTipoArchivo([]);
@@ -151,7 +151,7 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
 
           <Stack horizontal tokens={{ childrenGap: 10 }}>
             <PrimaryButton text="Buscar" onClick={() => void buscar(1)} />
-            <DefaultButton text="Limpiar" onClick={limpiarFiltros} />
+            <DefaultButton text="Borrar filtros" onClick={borrarFiltros} />
           </Stack>
         </Stack>
 
