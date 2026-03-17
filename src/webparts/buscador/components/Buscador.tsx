@@ -164,7 +164,7 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px', fontWeight: 200 }}>
                 Total resultados: {totalResultados}
               </div>
-              <ResultadosDocumentos resultados={resultados} onOpenPreview={handleOpenPreview} />
+              <ResultadosDocumentos resultados={resultados} onOpenPreview={handleOpenPreview} sp={sp}/>
             </div>
           )}
 
