@@ -22,16 +22,13 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
   // Estados de búsqueda
   const [tipoBusqueda, setTipoBusqueda] = useState<'documentos' | null>('documentos');
   const [filtroTitulo, setFiltroTitulo] = useState('');
-  const [filtroCreatedBy, setFiltroCreatedBy] = useState<string[]>([]);
   const [filtroTipoArchivo, setFiltroTipoArchivo] = useState<string[]>([]);
-  const [filtroAutor, setFiltroAutor] = useState<string[]>([]);
   const [filtroCarpeta, setFiltroCarpeta] = useState('');
   const [filtroFechaDocsDesde, setFiltroFechaDocsDesde] = useState<Date | undefined>();
   const [filtroFechaDocsHasta, setFiltroFechaDocsHasta] = useState<Date | undefined>();
   const [filtroTexto, setFiltroTexto] = useState<string[]>([]);
 
   // Opciones de dropdown
-  const [opcionesUsuarios, setOpcionesUsuarios] = useState<string[]>([]);
   const [opcionesTipoArchivo, setOpcionesTipoArchivo] = useState<string[]>([]);
 
   // Resultados
@@ -51,9 +48,7 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
   // Función para borrar filtros
   const borrarFiltros = () => {
     setFiltroTitulo('');
-    setFiltroCreatedBy([]);
     setFiltroTipoArchivo([]);
-    setFiltroAutor([]);
     setFiltroCarpeta('');
     setFiltroFechaDocsDesde(undefined);
     setFiltroFechaDocsHasta(undefined);
@@ -68,8 +63,6 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
         const tipos = await searchService.obtenerTiposArchivo();
         setOpcionesTipoArchivo(tipos);
 
-        const autores = await searchService.obtenerAutores();
-        setOpcionesUsuarios(autores);
       } catch (err) {
         console.error("Error cargando opciones:", err);
       }
@@ -89,7 +82,6 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
         {
           texto: filtroTexto,
           tipoArchivo: filtroTipoArchivo,
-          autor: filtroCreatedBy,
           carpeta: filtroCarpeta,
           titulo: filtroTitulo ? [filtroTitulo] : [],
           fechaDesde: filtroFechaDocsDesde,
@@ -136,9 +128,6 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
             setFechaDesde={setFiltroFechaDocsDesde}
             fechaHasta={filtroFechaDocsHasta}
             setFechaHasta={setFiltroFechaDocsHasta}
-            opcionesUsuarios={opcionesUsuarios}
-            filtroCreatedBy={filtroCreatedBy}
-            setFiltroCreatedBy={setFiltroCreatedBy}
             opcionesTipoArchivo={opcionesTipoArchivo}
             filtroTipoArchivo={filtroTipoArchivo}
             setFiltroTipoArchivo={setFiltroTipoArchivo}

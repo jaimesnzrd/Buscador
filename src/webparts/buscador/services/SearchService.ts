@@ -12,7 +12,6 @@ import "@pnp/sp/items";
 export interface IDocumentsFilters {
   texto?: string[];       // Palabras o frases a buscar en el documento
   tipoArchivo?: string[]; // Tipos de archivo permitidos (docx, pdf, etc.)
-  autor?: string[];       // Autores permitidos
   carpeta?: string;       // Carpeta específica dentro del site
   fechaDesde?: Date;      // Fecha mínima de creación
   fechaHasta?: Date;      // Fecha máxima de creación
@@ -53,7 +52,6 @@ export class SearchService {
       if (filtros.texto?.length) kql += ` AND (${filtros.texto.join(" OR ")})`;
       if (filtros.titulo?.length) kql += ` AND (${filtros.titulo.join(" OR ")})`;
       if (filtros.tipoArchivo?.length) kql += ` AND FileExtension:(${filtros.tipoArchivo.join(" OR ")})`;
-      if (filtros.autor?.length) kql += ` AND CreatedBy:(${filtros.autor.join(" OR ")})`;
       if (filtros.carpeta) kql += ` AND Path:${filtros.carpeta}`;
       if (filtros.fechaDesde) kql += ` AND Created>=${filtros.fechaDesde.toISOString()}`;
       if (filtros.fechaHasta) kql += ` AND Created<=${filtros.fechaHasta.toISOString()}`;

@@ -16,9 +16,6 @@ interface IFiltrosDocumentosProps {
   setFechaDesde: (d?: Date) => void;
   fechaHasta?: Date;
   setFechaHasta: (d?: Date) => void;
-  opcionesUsuarios: string[];
-  filtroCreatedBy: string[];
-  setFiltroCreatedBy: (v: string[]) => void;
   opcionesTipoArchivo: string[];
   filtroTipoArchivo: string[];
   setFiltroTipoArchivo: (v: string[]) => void;
@@ -31,16 +28,12 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
   setFechaDesde,
   fechaHasta,
   setFechaHasta,
-  opcionesUsuarios,
-  filtroCreatedBy,
-  setFiltroCreatedBy,
   opcionesTipoArchivo,
   filtroTipoArchivo,
   setFiltroTipoArchivo,
 }) => {
 
   // Conversión de opciones a formato Dropdown
-  const opcionesUsuariosDropdown: IDropdownOption[] = opcionesUsuarios.map(o => ({ key: o, text: o }));
   const opcionesTipoDropdown: IDropdownOption[] = opcionesTipoArchivo.map(o => ({ key: o, text: o }));
 
   // Estilo para que los Dropdowns tengan el mismo ancho que TextField
@@ -69,25 +62,6 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
           onSelectDate={date => setFechaHasta(date ?? undefined)} 
         />
       </Stack>
-
-      {/* Dropdown multi-select para "Creado por" */}
-      <Label>Creado por</Label>
-      <Dropdown
-        placeholder="Selecciona usuarios"
-        multiSelect
-        selectedKeys={filtroCreatedBy}
-        options={opcionesUsuariosDropdown}
-        onChange={(_, option) => {
-          if (!option) return;
-          const key = option.key as string;
-          setFiltroCreatedBy(
-            option.selected
-              ? [...filtroCreatedBy, key]
-              : filtroCreatedBy.filter(k => k !== key)
-          );
-        }}
-        styles={dropdownStyles}
-      />
 
       {/* Dropdown multi-select para "Formato de archivo" */}
       <Label>Formato de archivo</Label>
