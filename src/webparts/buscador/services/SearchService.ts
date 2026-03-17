@@ -16,6 +16,7 @@ export interface IDocumentsFilters {
   fechaDesde?: Date;      // Fecha mínima de creación
   fechaHasta?: Date;      // Fecha máxima de creación
   titulo?: string[];      // Títulos específicos
+  buscarContenido?: boolean; // Si true, busca también dentro del contenido del documento
 }
 
 // Interfaz para cada resultado de búsqueda
@@ -51,12 +52,21 @@ export class SearchService {
       // Agregar filtros KQL
       if (filtros.texto?.length) kql += ` AND (${filtros.texto.join(" OR ")})`;
 
-      // Busca en nombre del archivo (Title) Y en contenido del documento
+      // Busca en nombre del archivo, y opcionalmente en contenido
       if (filtros.titulo?.length) {
-        const terminos = filtros.titulo
-          .map(t => `(Title:"${t}" OR "${t}")`)
-          .join(" OR ");
-        kql += ` AND (${terminos})`;
+        if (filtros.buscarContenido) {
+          // Busca en título Y en contenido del documento
+          const terminos = filtros.titulo
+            .map(t => `(Title:"${t}" OR "${t}")`)
+            .join(" OR ");
+          kql += ` AND (${terminos})`;
+        } else {
+          // Solo busca en el título/nombre del archivo
+          const terminos = filtros.titulo
+            .map(t => `Title:"${t}"`)
+            .join(" OR ");
+          kql += ` AND (${terminos})`;
+        }
       }
 
       if (filtros.tipoArchivo?.length) kql += ` AND FileExtension:(${filtros.tipoArchivo.join(" OR ")})`;

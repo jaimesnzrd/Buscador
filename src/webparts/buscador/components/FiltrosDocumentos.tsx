@@ -8,6 +8,7 @@ import { TextField } from '@fluentui/react/lib/TextField';
 import { DatePicker } from '@fluentui/react/lib/DatePicker';
 import { DayOfWeek } from '@fluentui/react/lib/Calendar';
 import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react/lib/Dropdown';
+import { Checkbox } from '@fluentui/react/lib/Checkbox';
 
 // Props del componente
 interface IFiltrosDocumentosProps {
@@ -20,6 +21,8 @@ interface IFiltrosDocumentosProps {
   opcionesTipoArchivo: string[];
   filtroTipoArchivo: string[];
   setFiltroTipoArchivo: (v: string[]) => void;
+  buscarContenido: boolean;
+  setBuscarContenido: (v: boolean) => void;
 }
 
 const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
@@ -32,6 +35,8 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
   opcionesTipoArchivo,
   filtroTipoArchivo,
   setFiltroTipoArchivo,
+  buscarContenido,
+  setBuscarContenido,
 }) => {
 
   // Conversión de opciones a formato Dropdown
@@ -72,9 +77,16 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
 
       {/* Campo de texto para título */}
       <TextField 
-        label="Buscar por nombre o contenido" 
+        label="Nombre del documento" 
         value={titulo} 
         onChange={(_, val) => setTitulo(val || '')} 
+      />
+
+      {/* Checkbox para buscar dentro del contenido */}
+      <Checkbox
+        label="Buscar dentro de los documentos"
+        checked={buscarContenido}
+        onChange={(_, checked) => setBuscarContenido(!!checked)}
       />
 
       {/* Contenedor horizontal para los DatePickers */}

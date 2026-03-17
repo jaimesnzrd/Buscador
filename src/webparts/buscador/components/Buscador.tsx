@@ -27,6 +27,7 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
   const [filtroFechaDocsDesde, setFiltroFechaDocsDesde] = useState<Date | undefined>();
   const [filtroFechaDocsHasta, setFiltroFechaDocsHasta] = useState<Date | undefined>();
   const [filtroTexto, setFiltroTexto] = useState<string[]>([]);
+  const [buscarContenido, setBuscarContenido] = useState(false);
 
   // Opciones de dropdown
   const [opcionesTipoArchivo, setOpcionesTipoArchivo] = useState<string[]>([]);
@@ -53,6 +54,7 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
     setFiltroFechaDocsDesde(undefined);
     setFiltroFechaDocsHasta(undefined);
     setFiltroTexto([]);
+    setBuscarContenido(false);
     setError(null);
   };
 
@@ -85,7 +87,8 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
           carpeta: filtroCarpeta,
           titulo: filtroTitulo ? [filtroTitulo] : [],
           fechaDesde: filtroFechaDocsDesde,
-          fechaHasta: filtroFechaDocsHasta
+          fechaHasta: filtroFechaDocsHasta,
+          buscarContenido: buscarContenido
         },
         (pagina - 1) * resultadosPorPagina
       );
@@ -131,6 +134,8 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
             opcionesTipoArchivo={opcionesTipoArchivo}
             filtroTipoArchivo={filtroTipoArchivo}
             setFiltroTipoArchivo={setFiltroTipoArchivo}
+            buscarContenido={buscarContenido}
+            setBuscarContenido={setBuscarContenido}
           />
 
           <Stack horizontal tokens={{ childrenGap: 10 }}>
