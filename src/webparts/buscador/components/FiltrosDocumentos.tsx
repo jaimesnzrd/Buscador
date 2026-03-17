@@ -39,6 +39,17 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
   // Estilo para que los Dropdowns tengan el mismo ancho que TextField
   const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 170 } };
 
+  // Formatea fecha a DD/MM/AAAA
+  const formatDate = (date?: Date): string => {
+    if (!date) return '';
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  const hoy = new Date();
+
   return (
     <Stack tokens={{ childrenGap: 10 }}>
 
@@ -54,12 +65,17 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
         <DatePicker 
           label="Fecha desde" 
           value={fechaDesde} 
-          onSelectDate={date => setFechaDesde(date ?? undefined)} 
+          onSelectDate={date => setFechaDesde(date ?? undefined)}
+          maxDate={hoy}
+          formatDate={formatDate}
         />
         <DatePicker 
           label="Fecha hasta" 
           value={fechaHasta} 
-          onSelectDate={date => setFechaHasta(date ?? undefined)} 
+          onSelectDate={date => setFechaHasta(date ?? undefined)}
+          minDate={fechaDesde}
+          maxDate={hoy}
+          formatDate={formatDate}
         />
       </Stack>
 
