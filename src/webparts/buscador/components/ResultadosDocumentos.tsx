@@ -10,6 +10,8 @@ import { Icon } from '@fluentui/react/lib/Icon';
 // Importa SPFI para consultas a SharePoint
 import { SPFI } from "@pnp/sp";
 
+import { TooltipHost } from '@fluentui/react/lib/Tooltip';
+
 // Define la interfaz de props del componente
 interface IResultadosDocumentosProps {
   resultados: any[]; // Array de resultados a mostrar
@@ -122,23 +124,25 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
                   {getIcon(r.Tipo)}
                 </span>
               }
-              <strong
-                style={{
-                  color: '#D52B1E',
-                  fontWeight: 600,
-                  fontStyle: 'normal',
-                  fontSize: 16,
-                  lineHeight: '140%',
-                  letterSpacing: '1%',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  maxWidth: 300, // ancho máximo en px, ajusta según diseño
-                  display: 'inline-block'
-                }}
-              >
-                {r.Title?.replace(/_/g, ' ')}
-              </strong>
+              <TooltipHost content={r.Title?.replace(/_/g, ' ')}>
+                <strong
+                  style={{
+                    color: '#D52B1E',
+                    fontWeight: 600,
+                    fontStyle: 'normal',
+                    fontSize: 16,
+                    lineHeight: '140%',
+                    letterSpacing: '1%',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: 300,
+                    display: 'inline-block'
+                  }}
+                >
+                  {r.Title?.replace(/_/g, ' ')}
+                </strong>
+              </TooltipHost>
             </div>
 
             {/* Ruta por carpetas */}
