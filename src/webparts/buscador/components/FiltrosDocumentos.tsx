@@ -49,6 +49,22 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
     return `${day}/${month}/${year}`;
   };
 
+  // Strings en español para el calendario interno del DatePicker
+  const spanishCalendarStrings = {
+    months: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    shortMonths: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+    days: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+    shortDays: ['D','L','M','X','J','V','S'],
+    goToToday: 'Ir a hoy',
+    prevMonthAriaLabel: 'Mes anterior',
+    nextMonthAriaLabel: 'Mes siguiente',
+    prevYearAriaLabel: 'Año anterior',
+    nextYearAriaLabel: 'Año siguiente',
+    closeButtonAriaLabel: 'Cerrar',
+    monthPickerHeaderAriaLabel: '{0}, selecciona para cambiar el año',
+    yearPickerHeaderAriaLabel: '{0}, selecciona para cambiar el mes',
+  };
+
   const hoy = new Date();
 
   return (
@@ -70,6 +86,7 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
           maxDate={fechaHasta || hoy}
           formatDate={formatDate}
           firstDayOfWeek={DayOfWeek.Monday}
+          strings={spanishCalendarStrings}
         />
         <DatePicker 
           label="Fecha hasta" 
@@ -79,6 +96,7 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
           maxDate={hoy}
           formatDate={formatDate}
           firstDayOfWeek={DayOfWeek.Monday}
+          strings={spanishCalendarStrings}
         />
       </Stack>
 
