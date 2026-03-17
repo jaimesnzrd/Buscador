@@ -65,16 +65,11 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
   useEffect(() => {
     const cargarOpciones = async () => {
       try {
-        // Cargar usuarios
-        const items: any[] = await sp.web.lists.getByTitle("DocsBuscador")
-          .items.top(5000)
-          .select("Author/Title", "Title", "Created")
-          .expand("Author")();
-        setOpcionesUsuarios(Array.from(new Set(items.map(i => i.Author?.Title || i.Author).filter(Boolean))));
-
-        // Cargar tipos de archivo reales de la biblioteca
         const tipos = await searchService.obtenerTiposArchivo();
         setOpcionesTipoArchivo(tipos);
+
+        const autores = await searchService.obtenerAutores();
+        setOpcionesUsuarios(autores);
       } catch (err) {
         console.error("Error cargando opciones:", err);
       }

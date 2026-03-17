@@ -81,37 +81,69 @@ export class SearchService {
       throw err;
     }
   }
+
   // =====================
-  // ===== OBTENER TIPOS DE ARCHIVO REALES =====
+  // ===== OBTENER TIPOS DE ARCHIVO (via Refiners) =====
   // =====================
   public async obtenerTiposArchivo(): Promise<string[]> {
     try {
       const res = await this._sp.search({
         Querytext: `Path:"https://wslg4.sharepoint.com/sites/WebpartBuscador/DocsBuscador"`,
-        RowLimit: 1,           // No nos interesan los resultados en sí
-        SelectProperties: [],  // No necesitamos columnas
-        Refiners: "FileExtension", // Pide a SharePoint que agregue TODOS los tipos
+        RowLimit: 1,
+        SelectProperties: [],
+        Refiners: "FileExtension",
       });
 
-      const extensions = new Set<string>();
+      const tipos = new Set<string>();
+      const refiners = (res as any).RawSearchResults?.PrimaryQueryResult?.RefinementResults?.Refiners;
 
-      // Los refiners vienen en res.RawSearchResults.PrimaryQueryResult.RefinementResults
-      const refinementResults = (res as any).RawSearchResults?.PrimaryQueryResult?.RefinementResults?.Refiners;
-
-      if (refinementResults) {
-        refinementResults.forEach((refiner: any) => {
+      if (refiners) {
+        refiners.forEach((refiner: any) => {
           if (refiner.Name === "FileExtension") {
             refiner.Entries.forEach((entry: any) => {
               const ext = entry.RefinementName?.toLowerCase();
-              if (ext) extensions.add(ext);
+              if (ext) tipos.add(ext);
             });
           }
         });
       }
 
-      return Array.from(extensions).sort();
+      return Array.from(tipos).sort();
     } catch (err) {
       console.error("Error obtenerTiposArchivo:", err);
+      return [];
+    }
+  }
+
+  // =====================
+  // ===== OBTENER AUTORES (via Refiners) =====
+  // =====================
+  public async obtenerAutores(): Promise<string[]> {
+    try {
+      const res = await this._sp.search({
+        Querytext: `Path:"https://wslg4.sharepoint.com/sites/WebpartBuscador/DocsBuscador"`,
+        RowLimit: 1,
+        SelectProperties: [],
+        Refiners: "CreatedBy",
+      });
+
+      const autores = new Set<string>();
+      const refiners = (res as any).RawSearchResults?.PrimaryQueryResult?.RefinementResults?.Refiners;
+
+      if (refiners) {
+        refiners.forEach((refiner: any) => {
+          if (refiner.Name === "CreatedBy") {
+            refiner.Entries.forEach((entry: any) => {
+              const name = entry.RefinementName;
+              if (name) autores.add(name);
+            });
+          }
+        });
+      }
+
+      return Array.from(autores).sort();
+    } catch (err) {
+      console.error("Error obtenerAutores:", err);
       return [];
     }
   }
