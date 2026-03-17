@@ -59,12 +59,12 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
       {/* Contenedor horizontal para los DatePickers */}
       <Stack horizontal tokens={{ childrenGap: 10 }}>
         <DatePicker 
-          label="Fecha Desde" 
+          label="Fecha desde" 
           value={fechaDesde} 
           onSelectDate={date => setFechaDesde(date ?? undefined)} 
         />
         <DatePicker 
-          label="Fecha Hasta" 
+          label="Fecha hasta" 
           value={fechaHasta} 
           onSelectDate={date => setFechaHasta(date ?? undefined)} 
         />
