@@ -169,16 +169,82 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
           )}
 
           {totalResultados > 0 && (
-            <Stack horizontal horizontalAlign="space-between" verticalAlign="center" tokens={{ childrenGap: 10 }}>
-              <Stack horizontal tokens={{ childrenGap: 10 }}>
-                <DefaultButton text="Anterior" onClick={anteriorPagina} disabled={paginaActual === 1} />
-                <DefaultButton text="Siguiente" onClick={siguientePagina} disabled={paginaActual === paginasTotales} />
-              </Stack>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px', fontWeight: 200 }}>
-                <span>Página {paginaActual} de {paginasTotales}</span>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
+            <div
+              style={{
+                width: 184,
+                height: 35,
+                display: 'flex',
+                border: '1px solid #CFD8DC',
+                borderRadius: 4,
+                overflow: 'hidden',
+                fontFamily: 'Roboto',
+                fontSize: 16,
+                fontWeight: 400,
+                lineHeight: '100%',
+                letterSpacing: '1%',
+                textAlign: 'center'
+              }}
+            >
+              {/* Botón Anterior */}
+              <div
+                onClick={paginaActual > 1 ? anteriorPagina : undefined}
+                style={{
+                  width: 76,
+                  height: 35,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRight: '1px solid #CFD8DC',
+                  cursor: paginaActual > 1 ? 'pointer' : 'default',
+                  backgroundColor: '#fff',
+                  borderTopRightRadius: 4,
+                  borderBottomRightRadius: 4
+                }}
+                onMouseEnter={e => { (e.currentTarget.querySelector('span') as HTMLSpanElement).style.color = '#D52B1E'; }}
+                onMouseLeave={e => { (e.currentTarget.querySelector('span') as HTMLSpanElement).style.color = paginaActual > 1 ? '#000' : '#999'; }}
+              >
+                <span style={{ color: paginaActual > 1 ? '#000' : '#999' }}>Anterior</span>
               </div>
-            </Stack>
-          )}
+
+              {/* Número de página */}
+              <div
+                style={{
+                  width: 35,
+                  height: 35,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#D52B1E',
+                  color: '#fff',
+                  borderRight: '1px solid #CFD8DC'
+                }}
+              >
+                {paginaActual}
+              </div>
+
+              {/* Botón Siguiente */}
+              <div
+                onClick={paginaActual < paginasTotales ? siguientePagina : undefined}
+                style={{
+                  width: 76,
+                  height: 35,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: paginaActual < paginasTotales ? 'pointer' : 'default',
+                  backgroundColor: '#fff',
+                  borderTopRightRadius: 4,
+                  borderBottomRightRadius: 4
+                }}
+                onMouseEnter={e => { (e.currentTarget.querySelector('span') as HTMLSpanElement).style.color = '#D52B1E'; }}
+                onMouseLeave={e => { (e.currentTarget.querySelector('span') as HTMLSpanElement).style.color = paginaActual < paginasTotales ? '#000' : '#999'; }}
+              >
+                <span style={{ color: paginaActual < paginasTotales ? '#000' : '#999' }}>Siguiente</span>
+              </div>
+            </div>
+          </div>
+        )}
         </Stack>
       </Stack>
 
