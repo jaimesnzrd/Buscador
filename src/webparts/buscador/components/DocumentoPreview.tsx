@@ -129,12 +129,11 @@ const DocumentoPreview: React.FC<DocumentoPreviewProps> = ({ sp, isOpen, onDismi
   };
 
   // =========================
-  // FUNCION PARA RENDERIZAR METADATOS
+  // FUNCION PARA RENDERIZAR METADATOS EN FORMATO VERTICAL
   // =========================
   const renderMetadatos = () => {
-    if (!metadatos) return <p>No hay metadatos disponibles.</p>; // Si no hay, mensaje
+    if (!metadatos) return <p>No hay metadatos disponibles.</p>;
 
-    // Campos que vamos a mostrar
     const campos = [
       { key: 'Name', label: 'Nombre' },
       { key: 'Created', label: 'Creado' },
@@ -147,33 +146,22 @@ const DocumentoPreview: React.FC<DocumentoPreviewProps> = ({ sp, isOpen, onDismi
       { key: 'UniqueId', label: 'GUID' }
     ];
 
-    // Render de tabla con metadatos
+    // Dividir campos en 2 columnas, máximo 7 filas por columna
+    const columnas = [campos.slice(0, 7), campos.slice(7)];
+
     return (
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 10 }}>
-        <thead>
-          <tr style={{ borderBottom: '1px solid #ccc' }}>
-            <th style={{ textAlign: 'left', padding: 5 }}>Propiedad</th>
-            <th style={{ textAlign: 'left', padding: 5 }}>Valor</th>
-          </tr>
-        </thead>
-        <tbody>
-          {campos.map(c => (
-            <tr key={c.key} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={{ padding: 5 }}>{c.label}</td>
-              <td
-                style={{
-                    padding: 5,
-                    maxWidth: 400,
-                    whiteSpace: 'normal',
-                    wordWrap: 'break-word'
-                }}
-              >
-                {metadatos[c.key] || '-'}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div style={{ display: 'flex', gap: 40, justifyContent: 'center', marginTop: 10 }}>
+        {columnas.map((col, i) => (
+          <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
+            {col.map(c => (
+              <div key={c.key} style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <span style={{ fontWeight: 600 }}>{c.label}</span>
+                <span style={{ wordBreak: 'break-all', color: '#333' }}>{metadatos[c.key] || '-'}</span>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
     );
   };
 
@@ -209,10 +197,23 @@ const DocumentoPreview: React.FC<DocumentoPreviewProps> = ({ sp, isOpen, onDismi
 
       {/* Modal de metadatos */}
       <Modal
-        isOpen={metaModalOpen}                  // Controla si se muestra
+        isOpen={metaModalOpen}                   // Controla si se muestra
         onDismiss={() => setMetaModalOpen(false)} // Cierra modal de metadatos
-        isBlocking={false}                      // No bloquea fondo
-        styles={{ main: { maxWidth: '80%', minWidth: 500, maxHeight: '80%', overflowY: 'auto' } }}
+        isBlocking={false}                       // No bloquea fondo
+        styles={{ 
+          main: { 
+            width: 700,           // ancho fijo
+            height: 740,          // alto fijo
+            maxWidth: 700,        // asegura que no supere 700px
+            maxHeight: 740,       // asegura que no supere 740px
+            minWidth: 700,        // mínimo ancho
+            minHeight: 740,       // mínimo alto
+            overflowY: 'auto',    // scroll si el contenido excede
+            borderTopLeftRadius: 8,
+            borderBottomLeftRadius: 8,
+            opacity: 1            // opacidad completa
+          }
+        }}
       >
         <Stack tokens={{ childrenGap: 10 }} style={{ padding: 20 }}>
           {/* Header del modal de metadatos */}
@@ -221,7 +222,7 @@ const DocumentoPreview: React.FC<DocumentoPreviewProps> = ({ sp, isOpen, onDismi
             <IconButton iconProps={{ iconName: 'Cancel' }} onClick={() => setMetaModalOpen(false)} />
           </Stack>
 
-          {/* Render de la tabla de metadatos */}
+          {/* Render de los metadatos */}
           {renderMetadatos()}
         </Stack>
       </Modal>
