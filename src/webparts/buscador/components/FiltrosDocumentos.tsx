@@ -6,6 +6,7 @@ import { Stack } from '@fluentui/react/lib/Stack';
 import { Label } from '@fluentui/react/lib/Label';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { DatePicker } from '@fluentui/react/lib/DatePicker';
+import { DayOfWeek } from '@fluentui/react/lib/Calendar';
 import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react/lib/Dropdown';
 
 // Props del componente
@@ -68,6 +69,7 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
           onSelectDate={date => setFechaDesde(date ?? undefined)}
           maxDate={fechaHasta || hoy}
           formatDate={formatDate}
+          firstDayOfWeek={DayOfWeek.Monday}
         />
         <DatePicker 
           label="Fecha hasta" 
@@ -76,6 +78,7 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
           minDate={fechaDesde}
           maxDate={hoy}
           formatDate={formatDate}
+          firstDayOfWeek={DayOfWeek.Monday}
         />
       </Stack>
 
