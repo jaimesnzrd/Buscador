@@ -86,18 +86,28 @@ export class SearchService {
   // =====================
   public async obtenerTiposArchivo(): Promise<string[]> {
     try {
-      const items: any[] = await this._sp.web.lists.getByTitle("DocsBuscador")
-        .items.top(5000)
-        .select("FileLeafRef")();
+      const res = await this._sp.search({
+        Querytext: `Path:"https://wslg4.sharepoint.com/sites/WebpartBuscador/DocsBuscador"`,
+        RowLimit: 1,           // No nos interesan los resultados en sí
+        SelectProperties: [],  // No necesitamos columnas
+        Refiners: "FileExtension", // Pide a SharePoint que agregue TODOS los tipos
+      });
 
       const extensions = new Set<string>();
-      items.forEach((item: any) => {
-        const fileName = item.FileLeafRef;
-        if (fileName && fileName.includes('.')) {
-          const ext = fileName.split('.').pop()?.toLowerCase();
-          if (ext) extensions.add(ext);
-        }
-      });
+
+      // Los refiners vienen en res.RawSearchResults.PrimaryQueryResult.RefinementResults
+      const refinementResults = (res as any).RawSearchResults?.PrimaryQueryResult?.RefinementResults?.Refiners;
+
+      if (refinementResults) {
+        refinementResults.forEach((refiner: any) => {
+          if (refiner.Name === "FileExtension") {
+            refiner.Entries.forEach((entry: any) => {
+              const ext = entry.RefinementName?.toLowerCase();
+              if (ext) extensions.add(ext);
+            });
+          }
+        });
+      }
 
       return Array.from(extensions).sort();
     } catch (err) {
