@@ -72,7 +72,7 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
 
       {/* Campo de texto para título */}
       <TextField 
-        label="Nombre de documento" 
+        label="Buscar por nombre o contenido" 
         value={titulo} 
         onChange={(_, val) => setTitulo(val || '')} 
       />

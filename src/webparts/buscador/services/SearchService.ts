@@ -50,7 +50,15 @@ export class SearchService {
 
       // Agregar filtros KQL
       if (filtros.texto?.length) kql += ` AND (${filtros.texto.join(" OR ")})`;
-      if (filtros.titulo?.length) kql += ` AND (${filtros.titulo.join(" OR ")})`;
+
+      // Busca en nombre del archivo (Title) Y en contenido del documento
+      if (filtros.titulo?.length) {
+        const terminos = filtros.titulo
+          .map(t => `(Title:"${t}" OR "${t}")`)
+          .join(" OR ");
+        kql += ` AND (${terminos})`;
+      }
+
       if (filtros.tipoArchivo?.length) kql += ` AND FileExtension:(${filtros.tipoArchivo.join(" OR ")})`;
       if (filtros.carpeta) kql += ` AND Path:${filtros.carpeta}`;
       if (filtros.fechaDesde) kql += ` AND Created>=${filtros.fechaDesde.toISOString()}`;
