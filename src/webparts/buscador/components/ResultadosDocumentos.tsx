@@ -29,6 +29,7 @@ const cajitaStyle: React.CSSProperties = {
 
 const scrollContainerStyle: React.CSSProperties = {
   marginTop: 6,
+  marginRight: 110,
   display: 'flex',
   gap: 10,
   overflowX: 'auto',
