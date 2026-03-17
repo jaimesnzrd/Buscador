@@ -21,16 +21,16 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
     switch(tipo) {
       case 'pdf': 
         // Icono PDF con color rojo
-        return <><Icon iconName="PDF" styles={{ root: { color: '#d13438' } }} /> PDF</>;
+        return <><Icon iconName="PDF" styles={{ root: { color: '#d13438' } }} /> </>;
       case 'xlsx': 
         // Icono Excel con color rojo
-        return <><Icon iconName="ExcelDocument" styles={{ root: { color: '#217346' } }} /> XLSX</>;
+        return <><Icon iconName="ExcelDocument" styles={{ root: { color: '#217346' } }} /> </>;
       case 'docx': 
         // Icono Word con color rojo
-        return <><Icon iconName="WordDocument" styles={{ root: { color: '#2B579A' } }} /> DOCX</>;
+        return <><Icon iconName="WordDocument" styles={{ root: { color: '#2B579A' } }} /> </>;
       case 'pptx': 
         // Icono PowerPoint con color rojo
-        return <><Icon iconName="PowerPointDocument" styles={{ root: { color: '#d26e26' } }} /> PPTX</>;
+        return <><Icon iconName="PowerPointDocument" styles={{ root: { color: '#d26e26' } }} /> </>;
       default: 
         // Si no es ninguno de los anteriores, muestra el tipo tal cual
         return tipo;
@@ -53,7 +53,14 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
           }}
         >
           {/* Título del documento, reemplaza _ por espacios */}
-          <div><strong>{r.Title?.replace(/_/g, ' ')}</strong></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {r.Tipo && 
+              <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                {getIcon(r.Tipo)}
+              </span>
+            }
+            <strong>{r.Title?.replace(/_/g, ' ')}</strong>
+          </div>
 
           {/* Fecha y tipo de documento en horizontal */}
           <Stack horizontal horizontalAlign="space-between">
@@ -61,12 +68,7 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
               // Mostrar fecha de creación si existe
               <span><strong>Fecha:</strong> {new Date(r.Created).toLocaleDateString()}</span>
             }
-            {r.Tipo && 
-              // Mostrar tipo de documento con icono si existe
-              <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <strong>Tipo:</strong> {getIcon(r.Tipo)}
-              </span>
-            }
+            
           </Stack>
 
           {/* Vista previa clicable si hay path */}
