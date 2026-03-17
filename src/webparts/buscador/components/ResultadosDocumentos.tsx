@@ -123,17 +123,55 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
 
             {/* Metadatos debajo de la ruta */}
             {metadatosMap[r.Path] && (
-              <Stack horizontal tokens={{ childrenGap: 10 }} style={{ marginTop: 6 }}>
-                <div style={cajitaStyle}>Nombre: {metadatosMap[r.Path].Name}</div>
-                <div style={cajitaStyle}>Creado: {metadatosMap[r.Path].Created}</div>
-                <div style={cajitaStyle}>Modificado: {metadatosMap[r.Path].Modified}</div>
-                <div style={cajitaStyle}>Autor: {metadatosMap[r.Path].Author}</div>
-                <div style={cajitaStyle}>Editor: {metadatosMap[r.Path].Editor}</div>
-                <div style={cajitaStyle}>Ruta: {metadatosMap[r.Path].ServerRelativeUrl}</div>
-                <div style={cajitaStyle}>Última modificación: {metadatosMap[r.Path].TimeLastModified}</div>
-                <div style={cajitaStyle}>Tamaño: {metadatosMap[r.Path].Length}</div>
-                <div style={cajitaStyle}>GUID: {metadatosMap[r.Path].UniqueId}</div>
-              </Stack>
+              <div
+                style={{
+                  marginTop: 6,
+                  display: 'flex',
+                  gap: 10,
+                  overflowX: 'auto',
+                  paddingBottom: 4,
+                  cursor: 'grab',
+                  scrollbarWidth: 'none',        // Firefox
+                  msOverflowStyle: 'none'        // IE 10+
+                }}
+                // Opcional: para que al arrastrar con ratón se mueva el scroll
+                onMouseDown={(e) => {
+                  const container = e.currentTarget;
+                  let startX = e.pageX - container.offsetLeft;
+                  let scrollLeft = container.scrollLeft;
+
+                  const onMouseMove = (ev: MouseEvent) => {
+                    const x = ev.pageX - container.offsetLeft;
+                    container.scrollLeft = scrollLeft - (x - startX);
+                  };
+
+                  const onMouseUp = () => {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                  };
+
+                  document.addEventListener('mousemove', onMouseMove);
+                  document.addEventListener('mouseup', onMouseUp);
+                }}
+              >
+                {['Name','Created','Modified','Author','Editor','ServerRelativeUrl','TimeLastModified','Length','UniqueId'].map(key => (
+                  <div
+                    key={key}
+                    style={{
+                      ...cajitaStyle,
+                      height: 27,
+                      display: 'flex',
+                      alignItems: 'center',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
+                      fontWeight: 400,  
+                      fontSize: 14      
+                    }}
+                  >
+                    {`${key}: ${metadatosMap[r.Path][key]}`}
+                  </div>
+                ))}
+              </div>
             )}
 
             {/* Vista previa */}
@@ -142,7 +180,7 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
                 onClick={() => onOpenPreview(r.Path, r.Tipo || '', r.Title || '')}
                 style={{ 
                   color: 'red', 
-                  fontWeight: 600, 
+                  fontWeight: 900, 
                   textDecoration: 'underline', 
                   cursor: 'pointer', 
                   marginTop: 8, 
