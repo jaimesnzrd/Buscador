@@ -59,17 +59,11 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
                 {getIcon(r.Tipo)}
               </span>
             }
-            <strong>{r.Title?.replace(/_/g, ' ')}</strong>
+            <strong style={{ color: '#ed1e40' }}>{r.Title?.replace(/_/g, ' ')}</strong>
           </div>
 
           {/* Fecha y tipo de documento en horizontal */}
-          <Stack horizontal horizontalAlign="space-between">
-            {r.Created && 
-              // Mostrar fecha de creación si existe
-              <span><strong>Fecha:</strong> {new Date(r.Created).toLocaleDateString()}</span>
-            }
-            
-          </Stack>
+          
 
           {/* Vista previa clicable si hay path */}
           {r.Path && (
