@@ -59,9 +59,6 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
     setFiltroFechaDocsDesde(undefined);
     setFiltroFechaDocsHasta(undefined);
     setFiltroTexto([]);
-    setResultados([]);
-    setTotalResultados(0);
-    setPaginaActual(1);
     setError(null);
   };
 
