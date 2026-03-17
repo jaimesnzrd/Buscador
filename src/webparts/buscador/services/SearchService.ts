@@ -1,5 +1,8 @@
 import { SPFI } from "@pnp/sp";
 import "@pnp/sp/search";
+import "@pnp/sp/webs";
+import "@pnp/sp/lists";
+import "@pnp/sp/items";
 
 // =====================
 // ===== INTERFACES FILTROS =====
@@ -76,6 +79,27 @@ export class SearchService {
     } catch (err) {
       console.error("Error buscarDocumentos:", err);
       throw err;
+    }
+  }
+  // =====================
+  // ===== OBTENER TIPOS DE ARCHIVO REALES =====
+  // =====================
+  public async obtenerTiposArchivo(): Promise<string[]> {
+    try {
+      const items: any[] = await this._sp.web.lists.getByTitle("DocsBuscador")
+        .items.top(5000)
+        .select("File_x0020_Type")();
+
+      const extensions = new Set<string>();
+      items.forEach((item: any) => {
+        const ext = item.File_x0020_Type;
+        if (ext) extensions.add(ext.toLowerCase());
+      });
+
+      return Array.from(extensions).sort();
+    } catch (err) {
+      console.error("Error obtenerTiposArchivo:", err);
+      return [];
     }
   }
 }

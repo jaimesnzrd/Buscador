@@ -16,7 +16,7 @@ interface IBuscadorPropsExtended extends IWebpartBuscadorProps {
   sp: SPFI;
 }
 
-const opcionesTipoArchivo = ['docx', 'xlsx', 'pdf', 'pptx'];
+const [opcionesTipoArchivo, setOpcionesTipoArchivo] = useState<string[]>([]);
 
 const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp }) => {
   const searchService = React.useMemo(() => new SearchService(sp), [sp]);
@@ -66,12 +66,16 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
   useEffect(() => {
     const cargarOpciones = async () => {
       try {
-        // Solo documentos
+        // Cargar usuarios
         const items: any[] = await sp.web.lists.getByTitle("DocsBuscador")
           .items.top(5000)
           .select("Author/Title", "Title", "Created")
           .expand("Author")();
         setOpcionesUsuarios(Array.from(new Set(items.map(i => i.Author?.Title || i.Author).filter(Boolean))));
+
+        // Cargar tipos de archivo reales de la biblioteca
+        const tipos = await searchService.obtenerTiposArchivo();
+        setOpcionesTipoArchivo(tipos);
       } catch (err) {
         console.error("Error cargando opciones:", err);
       }
