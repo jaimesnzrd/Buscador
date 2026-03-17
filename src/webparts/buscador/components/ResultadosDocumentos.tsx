@@ -25,6 +25,19 @@ const cajitaStyle: React.CSSProperties = {
   fontSize: 12
 };
 
+
+
+const scrollContainerStyle: React.CSSProperties = {
+  marginTop: 6,
+  display: 'flex',
+  gap: 10,
+  overflowX: 'auto',
+  paddingBottom: 4,
+  cursor: 'grab',
+  scrollbarWidth: 'none',        // Firefox
+  msOverflowStyle: 'none',       // IE 10+
+};
+
 // Componente funcional ResultadosDocumentos
 const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados, onOpenPreview, sp }) => {
 
@@ -33,15 +46,16 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
 
   // Función para devolver el icono según el tipo de documento
   const getIcon = (tipo?: string) => {
+    const iconStyle = { root: { color: '#d13438', fontSize: 24, width: 24, height: 24 } }; // tamaño fijo
     switch(tipo) {
       case 'pdf': 
-        return <><Icon iconName="PDF" styles={{ root: { color: '#d13438' } }} /> </>;
+        return <Icon iconName="PDF" styles={iconStyle} />;
       case 'xlsx': 
-        return <><Icon iconName="ExcelDocument" styles={{ root: { color: '#217346' } }} /> </>;
+        return <Icon iconName="ExcelDocument" styles={iconStyle} />;
       case 'docx': 
-        return <><Icon iconName="WordDocument" styles={{ root: { color: '#2B579A' } }} /> </>;
+        return <Icon iconName="WordDocument" styles={iconStyle} />;
       case 'pptx': 
-        return <><Icon iconName="PowerPointDocument" styles={{ root: { color: '#d26e26' } }} /> </>;
+        return <Icon iconName="PowerPointDocument" styles={iconStyle} />;
       default: 
         return tipo;
     }
@@ -107,38 +121,49 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
                   {getIcon(r.Tipo)}
                 </span>
               }
-              <strong style={{ color: '#ed1e40' }}>{r.Title?.replace(/_/g, ' ')}</strong>
+              <strong
+                style={{
+                  color: '#D52B1E',
+                  fontWeight: 600,
+                  fontStyle: 'normal',
+                  fontSize: 16,
+                  lineHeight: '100%',
+                  letterSpacing: '1%',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: 300, // ancho máximo en px, ajusta según diseño
+                  display: 'inline-block'
+                }}
+              >
+                {r.Title?.replace(/_/g, ' ')}
+              </strong>
             </div>
 
             {/* Ruta por carpetas */}
             {r.Path && (
-              <div style={{ fontSize: 12, color: '#333333', marginTop: 4 }}>
+              <span 
+                style={{ fontSize: 12, color: '#333333', marginTop: 4, display: 'inline-block' }}
+                onClick={(e) => e.stopPropagation()} 
+              >
                 {r.Path
                   .split('/')
                   .slice(r.Path.split('/').indexOf('DocsBuscador') + 1, r.Path.split('/').length - 1)
                   .slice(0, 3)
                   .join(' > ')}
-              </div>
+              </span>
             )}
 
             {/* Metadatos debajo de la ruta */}
             {metadatosMap[r.Path] && (
               <div
-                style={{
-                  marginTop: 6,
-                  display: 'flex',
-                  gap: 10,
-                  overflowX: 'auto',
-                  paddingBottom: 4,
-                  cursor: 'grab',
-                  scrollbarWidth: 'none',        // Firefox
-                  msOverflowStyle: 'none'        // IE 10+
-                }}
-                // Opcional: para que al arrastrar con ratón se mueva el scroll
+                style={scrollContainerStyle}
                 onMouseDown={(e) => {
                   const container = e.currentTarget;
                   let startX = e.pageX - container.offsetLeft;
                   let scrollLeft = container.scrollLeft;
+
+                  container.style.cursor = 'grabbing';
 
                   const onMouseMove = (ev: MouseEvent) => {
                     const x = ev.pageX - container.offsetLeft;
@@ -146,6 +171,7 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
                   };
 
                   const onMouseUp = () => {
+                    container.style.cursor = 'grab';
                     document.removeEventListener('mousemove', onMouseMove);
                     document.removeEventListener('mouseup', onMouseUp);
                   };
@@ -167,6 +193,7 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
                       fontWeight: 400,  
                       fontSize: 14      
                     }}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     {`${key}: ${metadatosMap[r.Path][key]}`}
                   </div>
@@ -174,21 +201,25 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
               </div>
             )}
 
-            {/* Vista previa */}
+            {/* Vista previa: separada en un div independiente */}
             {r.Path && (
-              <span
-                onClick={() => onOpenPreview(r.Path, r.Tipo || '', r.Title || '')}
-                style={{ 
-                  color: 'red', 
-                  fontWeight: 900, 
-                  textDecoration: 'underline', 
-                  cursor: 'pointer', 
-                  marginTop: 8, 
-                  display: 'inline-block' 
-                }}
-              >
-                Vista previa
-              </span>
+              <div style={{ marginTop: 8 }}>
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenPreview(r.Path, r.Tipo || '', r.Title || '');
+                  }}
+                  style={{ 
+                    color: 'red', 
+                    fontWeight: 400, 
+                    textDecoration: 'underline', 
+                    cursor: 'pointer', 
+                    display: 'inline-block'
+                  }}
+                >
+                  Vista previa
+                </span>
+              </div>
             )}
           </Stack>
         );
