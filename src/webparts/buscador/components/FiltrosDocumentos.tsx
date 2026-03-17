@@ -89,8 +89,8 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
         styles={dropdownStyles}
       />
 
-      {/* Dropdown multi-select para "Tipo Archivo" */}
-      <Label>Tipo Archivo</Label>
+      {/* Dropdown multi-select para "Formato de archivo" */}
+      <Label>Formato de archivo</Label>
       <Dropdown
         placeholder="Selecciona tipos"
         multiSelect
