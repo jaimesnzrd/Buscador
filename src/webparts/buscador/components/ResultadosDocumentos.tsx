@@ -45,7 +45,7 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
         <Stack 
           key={idx} 
           style={{ 
-            border: '1px solid #606060', 
+            border: '1px solid #dcdcdc', 
             borderRadius: 6, 
             padding: 12, 
             marginBottom: 8, 
