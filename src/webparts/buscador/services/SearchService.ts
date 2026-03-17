@@ -88,12 +88,15 @@ export class SearchService {
     try {
       const items: any[] = await this._sp.web.lists.getByTitle("DocsBuscador")
         .items.top(5000)
-        .select("File_x0020_Type")();
+        .select("FileLeafRef")();
 
       const extensions = new Set<string>();
       items.forEach((item: any) => {
-        const ext = item.File_x0020_Type;
-        if (ext) extensions.add(ext.toLowerCase());
+        const fileName = item.FileLeafRef;
+        if (fileName && fileName.includes('.')) {
+          const ext = fileName.split('.').pop()?.toLowerCase();
+          if (ext) extensions.add(ext);
+        }
       });
 
       return Array.from(extensions).sort();

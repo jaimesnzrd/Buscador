@@ -16,8 +16,6 @@ interface IBuscadorPropsExtended extends IWebpartBuscadorProps {
   sp: SPFI;
 }
 
-const [opcionesTipoArchivo, setOpcionesTipoArchivo] = useState<string[]>([]);
-
 const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp }) => {
   const searchService = React.useMemo(() => new SearchService(sp), [sp]);
 
@@ -34,6 +32,7 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
 
   // Opciones de dropdown
   const [opcionesUsuarios, setOpcionesUsuarios] = useState<string[]>([]);
+  const [opcionesTipoArchivo, setOpcionesTipoArchivo] = useState<string[]>([]);
 
   // Resultados
   const [resultados, setResultados] = useState<any[]>([]);
