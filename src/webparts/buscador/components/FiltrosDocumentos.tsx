@@ -66,7 +66,7 @@ const FiltrosDocumentos: React.FC<IFiltrosDocumentosProps> = ({
           label="Fecha desde" 
           value={fechaDesde} 
           onSelectDate={date => setFechaDesde(date ?? undefined)}
-          maxDate={hoy}
+          maxDate={fechaHasta || hoy}
           formatDate={formatDate}
         />
         <DatePicker 
