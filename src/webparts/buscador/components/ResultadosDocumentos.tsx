@@ -127,7 +127,7 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
                   fontWeight: 600,
                   fontStyle: 'normal',
                   fontSize: 16,
-                  lineHeight: '100%',
+                  lineHeight: '140%',
                   letterSpacing: '1%',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
