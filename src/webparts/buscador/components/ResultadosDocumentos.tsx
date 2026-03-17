@@ -27,8 +27,6 @@ const cajitaStyle: React.CSSProperties = {
   fontSize: 12
 };
 
-
-
 const scrollContainerStyle: React.CSSProperties = {
   marginTop: 6,
   marginRight: 110,
@@ -99,136 +97,142 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
     }
   };
 
+  // ----------------------------
+  // Aquí corregimos el hook
+  // ----------------------------
+  React.useEffect(() => {
+    resultados.forEach(r => {
+      if (r.Path && !metadatosMap[r.Path]) {
+        void cargarMetadatosFila(r);
+      }
+    });
+  }, [resultados]);
+
   // Render principal del componente
   return (
     <>
-      {resultados.map((r, idx) => {
-        // Llamamos a cargar metadatos al montar la fila
-        React.useEffect(() => { cargarMetadatosFila(r); }, [r.Path]);
-
-        return (
-          <Stack 
-            key={idx} 
-            style={{ 
-              border: '1px solid #dcdcdc', 
-              borderRadius: 6, 
-              padding: 12, 
-              marginBottom: 8, 
-              background: '#ffffff' 
-            }}
-          >
-            {/* Título del documento */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              {r.Tipo && 
-                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  {getIcon(r.Tipo)}
-                </span>
-              }
-              <TooltipHost content={r.Title?.replace(/_/g, ' ')}>
-                <strong
-                  style={{
-                    color: '#D52B1E',
-                    fontWeight: 600,
-                    fontStyle: 'normal',
-                    fontSize: 16,
-                    lineHeight: '140%',
-                    letterSpacing: '1%',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    maxWidth: 300,
-                    display: 'inline-block'
-                  }}
-                >
-                  {r.Title?.replace(/_/g, ' ')}
-                </strong>
-              </TooltipHost>
-            </div>
-
-            {/* Ruta por carpetas */}
-            {r.Path && (
-              <span 
-                style={{ fontSize: 12, color: '#333333', marginTop: 4, display: 'inline-block' }}
-                onClick={(e) => e.stopPropagation()} 
-              >
-                {r.Path
-                  .split('/')
-                  .slice(r.Path.split('/').indexOf('DocsBuscador') + 1, r.Path.split('/').length - 1)
-                  .slice(0, 3)
-                  .join(' > ')}
+      {resultados.map((r, idx) => (
+        <Stack 
+          key={idx} 
+          style={{ 
+            border: '1px solid #dcdcdc', 
+            borderRadius: 6, 
+            padding: 12, 
+            marginBottom: 8, 
+            background: '#ffffff' 
+          }}
+        >
+          {/* Título del documento */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {r.Tipo && 
+              <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                {getIcon(r.Tipo)}
               </span>
-            )}
-
-            {/* Metadatos debajo de la ruta */}
-            {metadatosMap[r.Path] && (
-              <div
-                style={scrollContainerStyle}
-                onMouseDown={(e) => {
-                  const container = e.currentTarget;
-                  let startX = e.pageX - container.offsetLeft;
-                  let scrollLeft = container.scrollLeft;
-
-                  container.style.cursor = 'grabbing';
-
-                  const onMouseMove = (ev: MouseEvent) => {
-                    const x = ev.pageX - container.offsetLeft;
-                    container.scrollLeft = scrollLeft - (x - startX);
-                  };
-
-                  const onMouseUp = () => {
-                    container.style.cursor = 'grab';
-                    document.removeEventListener('mousemove', onMouseMove);
-                    document.removeEventListener('mouseup', onMouseUp);
-                  };
-
-                  document.addEventListener('mousemove', onMouseMove);
-                  document.addEventListener('mouseup', onMouseUp);
+            }
+            <TooltipHost content={r.Title?.replace(/_/g, ' ')}>
+              <strong
+                style={{
+                  color: '#D52B1E',
+                  fontWeight: 600,
+                  fontStyle: 'normal',
+                  fontSize: 16,
+                  lineHeight: '140%',
+                  letterSpacing: '1%',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: 300,
+                  display: 'inline-block'
                 }}
               >
-                {['Name','Created','Modified','Author','Editor','ServerRelativeUrl','TimeLastModified','Length','UniqueId'].map(key => (
-                  <div
-                    key={key}
-                    style={{
-                      ...cajitaStyle,
-                      height: 27,
-                      display: 'flex',
-                      alignItems: 'center',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                      fontWeight: 400,  
-                      fontSize: 14      
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {`${key}: ${metadatosMap[r.Path][key]}`}
-                  </div>
-                ))}
-              </div>
-            )}
+                {r.Title?.replace(/_/g, ' ')}
+              </strong>
+            </TooltipHost>
+          </div>
 
-            {/* Vista previa: separada en un div independiente */}
-            {r.Path && (
-              <div style={{ marginTop: 8 }}>
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOpenPreview(r.Path, r.Tipo || '', r.Title || '');
+          {/* Ruta por carpetas */}
+          {r.Path && (
+            <span 
+              style={{ fontSize: 12, color: '#333333', marginTop: 4, display: 'inline-block' }}
+              onClick={(e) => e.stopPropagation()} 
+            >
+              {r.Path
+                .split('/')
+                .slice(r.Path.split('/').indexOf('DocsBuscador') + 1, r.Path.split('/').length - 1)
+                .slice(0, 3)
+                .join(' > ')}
+            </span>
+          )}
+
+          {/* Metadatos debajo de la ruta */}
+          {metadatosMap[r.Path] && (
+            <div
+              style={scrollContainerStyle}
+              onMouseDown={(e) => {
+                const container = e.currentTarget;
+                let startX = e.pageX - container.offsetLeft;
+                let scrollLeft = container.scrollLeft;
+
+                container.style.cursor = 'grabbing';
+
+                const onMouseMove = (ev: MouseEvent) => {
+                  const x = ev.pageX - container.offsetLeft;
+                  container.scrollLeft = scrollLeft - (x - startX);
+                };
+
+                const onMouseUp = () => {
+                  container.style.cursor = 'grab';
+                  document.removeEventListener('mousemove', onMouseMove);
+                  document.removeEventListener('mouseup', onMouseUp);
+                };
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+              }}
+            >
+              {['Name','Created','Modified','Author','Editor','ServerRelativeUrl','TimeLastModified','Length','UniqueId'].map(key => (
+                <div
+                  key={key}
+                  style={{
+                    ...cajitaStyle,
+                    height: 27,
+                    display: 'flex',
+                    alignItems: 'center',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
+                    fontWeight: 400,  
+                    fontSize: 14      
                   }}
-                  style={{ 
-                    color: 'red', 
-                    fontWeight: 400, 
-                    textDecoration: 'underline', 
-                    cursor: 'pointer', 
-                    display: 'inline-block'
-                  }}
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  Vista previa
-                </span>
-              </div>
-            )}
-          </Stack>
-        );
-      })}
+                  {`${key}: ${metadatosMap[r.Path][key]}`}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Vista previa: separada en un div independiente */}
+          {r.Path && (
+            <div style={{ marginTop: 8 }}>
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenPreview(r.Path, r.Tipo || '', r.Title || '');
+                }}
+                style={{ 
+                  color: 'red', 
+                  fontWeight: 400, 
+                  textDecoration: 'underline', 
+                  cursor: 'pointer', 
+                  display: 'inline-block'
+                }}
+              >
+                Vista previa
+              </span>
+            </div>
+          )}
+        </Stack>
+      ))}
     </>
   );
 };
