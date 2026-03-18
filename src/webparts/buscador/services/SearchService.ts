@@ -205,10 +205,12 @@ export class SearchService {
 
   private async _contarDocsEnCarpeta(serverRelativePath: string): Promise<number> {
     try {
-      const folder = await this._sp.web
-        .getFolderByServerRelativePath(serverRelativePath)
-        .select("ItemCount")();
-      return folder.ItemCount || 0;
+      const res = await this._sp.search({
+        Querytext: `Path:"https://wslg4.sharepoint.com${serverRelativePath}" AND IsDocument:1`,
+        RowLimit: 1,
+        SelectProperties: ["Title"],
+      });
+      return res.TotalRows;
     } catch { return 0; }
   }
 
