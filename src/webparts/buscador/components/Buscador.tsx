@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Stack } from '@fluentui/react/lib/Stack';
 import { Label } from '@fluentui/react/lib/Label';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
@@ -7,7 +7,7 @@ import { PrimaryButton, DefaultButton } from '@fluentui/react/lib/Button';
 import { DatePicker } from '@fluentui/react/lib/DatePicker';
 import { SPFI } from '@pnp/sp';
 import { IWebpartBuscadorProps } from './IBuscadorProps';
-import { SearchService } from '../services/SearchService';
+import { SearchService, ICarpetaInfo } from '../services/SearchService';
 import FiltrosDocumentos from './FiltrosDocumentos';
 import ResultadosDocumentos from './ResultadosDocumentos';
 import DocumentoPreview from './DocumentoPreview';
@@ -40,6 +40,17 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Filtros jerárquicos
+  const [bloques, setBloques] = useState<ICarpetaInfo[]>([]);
+  const [selectedBloques, setSelectedBloques] = useState<string[]>([]);
+  const [loadingBloques, setLoadingBloques] = useState(false);
+  const [secciones, setSecciones] = useState<ICarpetaInfo[]>([]);
+  const [selectedSecciones, setSelectedSecciones] = useState<string[]>([]);
+  const [loadingSecciones, setLoadingSecciones] = useState(false);
+  const [subSecciones, setSubSecciones] = useState<ICarpetaInfo[]>([]);
+  const [selectedSubSecciones, setSelectedSubSecciones] = useState<string[]>([]);
+  const [loadingSubSecciones, setLoadingSubSecciones] = useState(false);
+
   // Modal de preview
   const [modalOpen, setModalOpen] = useState(false);
   const [modalUrl, setModalUrl] = useState('');
@@ -55,6 +66,11 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
     setFiltroFechaDocsHasta(undefined);
     setFiltroTexto([]);
     setBuscarContenido(false);
+    setSelectedBloques([]);
+    setSelectedSecciones([]);
+    setSelectedSubSecciones([]);
+    setSecciones([]);
+    setSubSecciones([]);
     setError(null);
   };
 
@@ -64,6 +80,12 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
       try {
         const tipos = await searchService.obtenerTiposArchivo();
         setOpcionesTipoArchivo(tipos);
+        
+        // Cargar bloques filtros de carpeta al inicio
+        setLoadingBloques(true);
+        const bloquesData = await searchService.obtenerCarpetas(searchService.getLibraryPath());
+        setBloques(bloquesData);
+        setLoadingBloques(false);
 
       } catch (err) {
         console.error("Error cargando opciones:", err);
@@ -71,6 +93,58 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
     };
     void cargarOpciones();
   }, [sp]);
+
+  // Cargar Secciones al cambiar Bloques
+  useEffect(() => {
+    const cargar = async (): Promise<void> => {
+      if (selectedBloques.length === 0) {
+        setSecciones([]); setSelectedSecciones([]);
+        setSubSecciones([]); setSelectedSubSecciones([]);
+        return;
+      }
+      setLoadingSecciones(true);
+      const todas: ICarpetaInfo[] = [];
+      for (const bp of selectedBloques) {
+        const s = await searchService.obtenerCarpetas(bp);
+        todas.push(...s);
+      }
+      setSecciones(todas);
+      setSelectedSecciones(prev => prev.filter(s => todas.some(t => t.path === s)));
+      setLoadingSecciones(false);
+    };
+    void cargar();
+  }, [selectedBloques]);
+
+  // Cargar Sub-Secciones al cambiar Secciones
+  useEffect(() => {
+    const cargar = async (): Promise<void> => {
+      if (selectedSecciones.length === 0) {
+        setSubSecciones([]); setSelectedSubSecciones([]);
+        return;
+      }
+      setLoadingSubSecciones(true);
+      const todas: ICarpetaInfo[] = [];
+      for (const sp2 of selectedSecciones) {
+        const ss = await searchService.obtenerCarpetas(sp2);
+        todas.push(...ss);
+      }
+      setSubSecciones(todas);
+      setSelectedSubSecciones(prev => prev.filter(s => todas.some(t => t.path === s)));
+      setLoadingSubSecciones(false);
+    };
+    void cargar();
+  }, [selectedSecciones]);
+
+  // Toggles
+  const handleToggleBloque = useCallback((path: string): void => {
+    setSelectedBloques(prev => prev.includes(path) ? prev.filter(p => p !== path) : [...prev, path]);
+  }, []);
+  const handleToggleSeccion = useCallback((path: string): void => {
+    setSelectedSecciones(prev => prev.includes(path) ? prev.filter(p => p !== path) : [...prev, path]);
+  }, []);
+  const handleToggleSubSeccion = useCallback((path: string): void => {
+    setSelectedSubSecciones(prev => prev.includes(path) ? prev.filter(p => p !== path) : [...prev, path]);
+  }, []);
 
   // Función de búsqueda
   const buscar = async (pagina: number = 1) => {
@@ -86,6 +160,10 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
           tipoArchivo: filtroTipoArchivo,
           carpeta: filtroCarpeta,
           titulo: filtroTitulo ? [filtroTitulo] : [],
+          carpetas: selectedSubSecciones.length > 0 ? selectedSubSecciones
+            : selectedSecciones.length > 0 ? selectedSecciones
+            : selectedBloques.length > 0 ? selectedBloques
+            : [],
           fechaDesde: filtroFechaDocsDesde,
           fechaHasta: filtroFechaDocsHasta,
           buscarContenido: buscarContenido
@@ -136,6 +214,18 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
             setFiltroTipoArchivo={setFiltroTipoArchivo}
             buscarContenido={buscarContenido}
             setBuscarContenido={setBuscarContenido}
+            bloques={bloques}
+            selectedBloques={selectedBloques}
+            onToggleBloque={handleToggleBloque}
+            loadingBloques={loadingBloques}
+            secciones={secciones}
+            selectedSecciones={selectedSecciones}
+            onToggleSeccion={handleToggleSeccion}
+            loadingSecciones={loadingSecciones}
+            subSecciones={subSecciones}
+            selectedSubSecciones={selectedSubSecciones}
+            onToggleSubSeccion={handleToggleSubSeccion}
+            loadingSubSecciones={loadingSubSecciones}
           />
 
           <Stack horizontal tokens={{ childrenGap: 10 }}>

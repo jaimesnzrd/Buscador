@@ -3,6 +3,7 @@ import "@pnp/sp/search";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
 import "@pnp/sp/items";
+import "@pnp/sp/folders";
 
 // =====================
 // ===== INTERFACES FILTROS =====
@@ -13,6 +14,7 @@ export interface IDocumentsFilters {
   texto?: string[];       // Palabras o frases a buscar en el documento
   tipoArchivo?: string[]; // Tipos de archivo permitidos (docx, pdf, etc.)
   carpeta?: string;       // Carpeta específica dentro del site
+  carpetas?: string[];    // Carpetas para filtros
   fechaDesde?: Date;      // Fecha mínima de creación
   fechaHasta?: Date;      // Fecha máxima de creación
   titulo?: string[];      // Títulos específicos
@@ -26,6 +28,13 @@ export interface ISearchResultItem {
   Author?: string;        // Autor
   Created?: string;       // Fecha de creación
   Tipo?: string;          // Tipo de documento (FileExtension)
+}
+
+// Interfaz para carpetas, filtros
+export interface ICarpetaInfo {
+  nombre: string;
+  path: string;
+  count: number;
 }
 
 // =====================
@@ -70,7 +79,14 @@ export class SearchService {
       }
 
       if (filtros.tipoArchivo?.length) kql += ` AND FileExtension:(${filtros.tipoArchivo.join(" OR ")})`;
-      if (filtros.carpeta) kql += ` AND Path:${filtros.carpeta}`;
+      if (filtros.carpetas?.length) {
+        const pathFilters = filtros.carpetas
+          .map(p => `Path:"https://wslg4.sharepoint.com${p}"`)
+          .join(" OR ");
+        kql += ` AND (${pathFilters})`;
+      } else if (filtros.carpeta) {
+        kql += ` AND Path:${filtros.carpeta}`;
+      }
       if (filtros.fechaDesde) kql += ` AND Created>=${filtros.fechaDesde.toISOString()}`;
       if (filtros.fechaHasta) kql += ` AND Created<=${filtros.fechaHasta.toISOString()}`;
 
@@ -162,5 +178,41 @@ export class SearchService {
       console.error("Error obtenerAutores:", err);
       return [];
     }
+  }
+
+  // Devuelve las subcarpetas de un path con conteo de docs
+  public async obtenerCarpetas(parentPath: string): Promise<ICarpetaInfo[]> {
+    try {
+      const folders: any[] = await this._sp.web
+        .getFolderByServerRelativePath(parentPath)
+        .folders();
+
+      const carpetas: ICarpetaInfo[] = [];
+      for (const folder of folders) {
+        if (folder.Name === "Forms") continue;
+        const folderPath = `${parentPath}/${folder.Name}`;
+        const count = await this._contarDocsEnCarpeta(folderPath);
+        carpetas.push({ nombre: folder.Name, path: folderPath, count });
+      }
+      return carpetas.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    } catch (err) {
+      console.error("Error obtenerCarpetas:", err);
+      return [];
+    }
+  }
+
+  private async _contarDocsEnCarpeta(serverRelativePath: string): Promise<number> {
+    try {
+      const res = await this._sp.search({
+        Querytext: `Path:"https://wslg4.sharepoint.com${serverRelativePath}" AND IsDocument:1`,
+        RowLimit: 1,
+        SelectProperties: ["Title"],
+      });
+      return res.TotalRows;
+    } catch { return 0; }
+  }
+
+  public getLibraryPath(): string {
+    return "/sites/WebpartBuscador/DocsBuscador";
   }
 }
