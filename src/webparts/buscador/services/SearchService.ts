@@ -187,13 +187,15 @@ export class SearchService {
         .getFolderByServerRelativePath(parentPath)
         .folders();
 
-      const carpetas: ICarpetaInfo[] = [];
-      for (const folder of folders) {
-        if (folder.Name === "Forms") continue;
-        const folderPath = `${parentPath}/${folder.Name}`;
-        const count = await this._contarDocsEnCarpeta(folderPath);
-        carpetas.push({ nombre: folder.Name, path: folderPath, count });
-      }
+      const carpetas: ICarpetaInfo[] = await Promise.all(
+        folders
+          .filter(f => f.Name !== "Forms")
+          .map(async (folder) => {
+            const folderPath = `${parentServerRelativePath}/${folder.Name}`;
+            const count = await this._contarDocsEnCarpeta(folderPath);
+            return { nombre: folder.Name, path: folderPath, count };
+          })
+      );
       return carpetas.sort((a, b) => a.nombre.localeCompare(b.nombre));
     } catch (err) {
       console.error("Error obtenerCarpetas:", err);
@@ -203,12 +205,10 @@ export class SearchService {
 
   private async _contarDocsEnCarpeta(serverRelativePath: string): Promise<number> {
     try {
-      const res = await this._sp.search({
-        Querytext: `Path:"https://wslg4.sharepoint.com${serverRelativePath}" AND IsDocument:1`,
-        RowLimit: 1,
-        SelectProperties: ["Title"],
-      });
-      return res.TotalRows;
+      const folder = await this._sp.web
+        .getFolderByServerRelativePath(serverRelativePath)
+        .select("ItemCount")();
+      return folder.ItemCount || 0;
     } catch { return 0; }
   }
 
