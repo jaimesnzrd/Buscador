@@ -36,7 +36,7 @@ export default class WebpartBuscadorWebPart extends BaseClientSideWebPart<IWebpa
 
     // Creamos la instancia de SPFI usando el contexto de SPFx
     // Esto permite que todas las llamadas a SharePoint se realicen correctamente con contexto actual
-    this._sp = spfi(`https://confolabs.sharepoint.com/sites/WebpartBuscador`).using(SPFx(this.context));
+    this._sp = spfi(`https://confolabs.sharepoint.com`).using(SPFx(this.context));
   }
 
   // =========================
