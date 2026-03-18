@@ -56,7 +56,7 @@ export class SearchService {
   ): Promise<{ resultados: ISearchResultItem[]; total: number }> {
     try {
       // Base de la query KQL apuntando a la librería de documentos
-      let kql = `Path:"https://wslg4.sharepoint.com/sites/WebpartBuscador/DocsBuscador"`;
+      let kql = `Path:"https://confolabs.sharepoint.com/sites/WebpartBuscador/DocsBuscador"`;
 
       // Agregar filtros KQL
       if (filtros.texto?.length) kql += ` AND (${filtros.texto.join(" OR ")})`;
@@ -81,7 +81,7 @@ export class SearchService {
       if (filtros.tipoArchivo?.length) kql += ` AND FileExtension:(${filtros.tipoArchivo.join(" OR ")})`;
       if (filtros.carpetas?.length) {
         const pathFilters = filtros.carpetas
-          .map(p => `Path:"https://wslg4.sharepoint.com${p}"`)
+          .map(p => `Path:"https://confolabs.sharepoint.com${p}"`)
           .join(" OR ");
         kql += ` AND (${pathFilters})`;
       } else if (filtros.carpeta) {
@@ -120,7 +120,7 @@ export class SearchService {
   public async obtenerTiposArchivo(): Promise<string[]> {
     try {
       const res = await this._sp.search({
-        Querytext: `Path:"https://wslg4.sharepoint.com/sites/WebpartBuscador/DocsBuscador"`,
+        Querytext: `Path:"https://confolabs.sharepoint.com/sites/WebpartBuscador/DocsBuscador"`,
         RowLimit: 1,
         SelectProperties: [],
         Refiners: "FileExtension",
@@ -153,7 +153,7 @@ export class SearchService {
   public async obtenerAutores(): Promise<string[]> {
     try {
       const res = await this._sp.search({
-        Querytext: `Path:"https://wslg4.sharepoint.com/sites/WebpartBuscador/DocsBuscador"`,
+        Querytext: `Path:"https://confolabs.sharepoint.com/sites/WebpartBuscador/DocsBuscador"`,
         RowLimit: 1,
         SelectProperties: [],
         Refiners: "CreatedBy",
@@ -206,7 +206,7 @@ export class SearchService {
   private async _contarDocsEnCarpeta(serverRelativePath: string): Promise<number> {
     try {
       const res = await this._sp.search({
-        Querytext: `Path:"https://wslg4.sharepoint.com${serverRelativePath}" AND IsDocument:1`,
+        Querytext: `Path:"https://confolabs.sharepoint.com${serverRelativePath}" AND IsDocument:1`,
         RowLimit: 1,
         SelectProperties: ["Title"],
       });

@@ -34,9 +34,9 @@ const DocumentoPreview: React.FC<DocumentoPreviewProps> = ({ sp, isOpen, onDismi
 
   // URLs base de Office para previsualización online según tipo de archivo
   const officeUrls: Record<string, string> = {
-    pptx: 'https://wslg4.sharepoint.com/:p:/r/sites/WebpartBuscador/_layouts/15/Doc.aspx',
-    xlsx: 'https://wslg4.sharepoint.com/:x:/r/sites/WebpartBuscador/_layouts/15/Doc.aspx',
-    docx: 'https://wslg4.sharepoint.com/:w:/r/sites/WebpartBuscador/_layouts/15/Doc.aspx'
+    pptx: 'https://confolabs.sharepoint.com/:p:/r/sites/WebpartBuscador/_layouts/15/Doc.aspx',
+    xlsx: 'https://confolabs.sharepoint.com/:x:/r/sites/WebpartBuscador/_layouts/15/Doc.aspx',
+    docx: 'https://confolabs.sharepoint.com/:w:/r/sites/WebpartBuscador/_layouts/15/Doc.aspx'
   };
 
   // =========================
@@ -48,7 +48,7 @@ const DocumentoPreview: React.FC<DocumentoPreviewProps> = ({ sp, isOpen, onDismi
       setLoadingMeta(true); // Activa spinner
 
       // Convierte URL completa a path relativo del sitio
-      const serverPath = url.replace("https://wslg4.sharepoint.com", "");
+      const serverPath = url.replace("https://confolabs.sharepoint.com", "");
 
       // 1. Obtenemos el archivo con info básica: Name, Created, Modified
       const file: any = await sp.web.getFileByServerRelativePath(serverPath)();
