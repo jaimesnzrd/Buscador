@@ -56,7 +56,7 @@ export class SearchService {
   ): Promise<{ resultados: ISearchResultItem[]; total: number }> {
     try {
       // Base de la query KQL apuntando a la librería de documentos
-      let kql = `Path:"https://confolabs.sharepoint.com/sites/WebpartBuscador/DocsBuscador"`;
+      let kql = `Path:"${this._siteUrl}${this._libraryPath}"`;
 
       // Agregar filtros KQL
       if (filtros.texto?.length) kql += ` AND (${filtros.texto.join(" OR ")})`;
@@ -81,7 +81,7 @@ export class SearchService {
       if (filtros.tipoArchivo?.length) kql += ` AND FileExtension:(${filtros.tipoArchivo.join(" OR ")})`;
       if (filtros.carpetas?.length) {
         const pathFilters = filtros.carpetas
-          .map(p => `Path:"https://confolabs.sharepoint.com${p}"`)
+          .map(p => `Path:"${this._siteUrl}${p}"`)
           .join(" OR ");
         kql += ` AND (${pathFilters})`;
       } else if (filtros.carpeta) {
@@ -120,7 +120,7 @@ export class SearchService {
   public async obtenerTiposArchivo(): Promise<string[]> {
     try {
       const res = await this._sp.search({
-        Querytext: `Path:"https://confolabs.sharepoint.com/sites/WebpartBuscador/DocsBuscador"`,
+        Querytext: `Path:"${this._siteUrl}${this._libraryPath}"`,
         RowLimit: 1,
         SelectProperties: [],
         Refiners: "FileExtension",
@@ -153,7 +153,7 @@ export class SearchService {
   public async obtenerAutores(): Promise<string[]> {
     try {
       const res = await this._sp.search({
-        Querytext: `Path:"https://confolabs.sharepoint.com/sites/WebpartBuscador/DocsBuscador"`,
+        Querytext: `Path:"${this._siteUrl}${this._libraryPath}"`,
         RowLimit: 1,
         SelectProperties: [],
         Refiners: "CreatedBy",
@@ -206,7 +206,7 @@ export class SearchService {
   private async _contarDocsEnCarpeta(serverRelativePath: string): Promise<number> {
     try {
       const res = await this._sp.search({
-        Querytext: `Path:"https://confolabs.sharepoint.com${serverRelativePath}" AND IsDocument:1`,
+        Querytext: `Path:"${this._siteUrl}${serverRelativePath}" AND IsDocument:1`,
         RowLimit: 1,
         SelectProperties: ["Title"],
       });
@@ -214,7 +214,36 @@ export class SearchService {
     } catch { return 0; }
   }
 
+  private _libraryPath: string = "";
+  private _siteUrl: string = "https://confolabs.sharepoint.com";
+
+  public setLibraryPath(path: string): void {
+    this._libraryPath = path;
+  }
+
   public getLibraryPath(): string {
-    return "/sites/WebpartBuscador/DocsBuscador";
+    return this._libraryPath;
+  }
+
+  public getSiteUrl(): string {
+    return this._siteUrl;
+  }
+
+  // Obtener todas las Document Libraries del site
+  public async obtenerBibliotecas(): Promise<{ nombre: string; path: string }[]> {
+    try {
+      const lists = await this._sp.web.lists
+        .filter("BaseTemplate eq 101 and Hidden eq false")
+        .select("Title", "RootFolder/ServerRelativeUrl")
+        .expand("RootFolder")();
+
+      return lists.map((l: any) => ({
+        nombre: l.Title,
+        path: l.RootFolder.ServerRelativeUrl,
+      }));
+    } catch (err) {
+      console.error("Error obtenerBibliotecas:", err);
+      return [];
+    }
   }
 }

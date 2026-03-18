@@ -11,6 +11,7 @@ import { SearchService, ICarpetaInfo } from '../services/SearchService';
 import FiltrosDocumentos from './FiltrosDocumentos';
 import ResultadosDocumentos from './ResultadosDocumentos';
 import DocumentoPreview from './DocumentoPreview';
+import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 
 interface IBuscadorPropsExtended extends IWebpartBuscadorProps {
   sp: SPFI;
@@ -51,6 +52,11 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
   const [selectedSubSecciones, setSelectedSubSecciones] = useState<string[]>([]);
   const [loadingSubSecciones, setLoadingSubSecciones] = useState(false);
 
+  // Selector de biblioteca
+  const [bibliotecas, setBibliotecas] = useState<{ nombre: string; path: string }[]>([]);
+  const [selectedLibrary, setSelectedLibrary] = useState<string>('');
+  const [loadingLibraries, setLoadingLibraries] = useState(false);
+
   // Modal de preview
   const [modalOpen, setModalOpen] = useState(false);
   const [modalUrl, setModalUrl] = useState('');
@@ -74,25 +80,49 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
     setError(null);
   };
 
-  // Cargar opciones de usuarios al iniciar
+  // Cargar bibliotecas al inicio
   useEffect(() => {
-    const cargarOpciones = async () => {
+    const cargarBibliotecas = async (): Promise<void> => {
       try {
+        setLoadingLibraries(true);
+        const libs = await searchService.obtenerBibliotecas();
+        setBibliotecas(libs);
+      } catch (err) {
+        console.error("Error cargando bibliotecas:", err);
+      } finally {
+        setLoadingLibraries(false);
+      }
+    };
+    void cargarBibliotecas();
+  }, [sp]);
+
+  // Cuando se selecciona una library, cargar sus datos
+  useEffect(() => {
+    if (!selectedLibrary) return;
+    const cargarDatosLibrary = async (): Promise<void> => {
+      try {
+        searchService.setLibraryPath(selectedLibrary);
+
+        // Cargar tipos de archivo
         const tipos = await searchService.obtenerTiposArchivo();
         setOpcionesTipoArchivo(tipos);
-        
-        // Cargar bloques filtros de carpeta al inicio
+
+        // Cargar bloques (carpetas de primer nivel)
         setLoadingBloques(true);
-        const bloquesData = await searchService.obtenerCarpetas(searchService.getLibraryPath());
+        const bloquesData = await searchService.obtenerCarpetas(selectedLibrary);
         setBloques(bloquesData);
         setLoadingBloques(false);
 
+        // Limpiar resultados y filtros anteriores
+        setResultados([]);
+        setTotalResultados(0);
+        borrarFiltros();
       } catch (err) {
-        console.error("Error cargando opciones:", err);
+        console.error("Error cargando datos de library:", err);
       }
     };
-    void cargarOpciones();
-  }, [sp]);
+    void cargarDatosLibrary();
+  }, [selectedLibrary]);
 
   // Cargar Secciones al cambiar Bloques
   useEffect(() => {
@@ -196,6 +226,18 @@ const BuscadorDocumentos: React.FC<IBuscadorPropsExtended> = ({ description, sp 
     <div style={{ padding: 20 }}>
       <p>{description}</p>
       <h2>Buscador de Documentos</h2>
+
+      <Dropdown
+        label="Biblioteca de documentos"
+        placeholder={loadingLibraries ? "Cargando bibliotecas..." : "Selecciona una biblioteca"}
+        options={bibliotecas.map(b => ({ key: b.path, text: b.nombre }))}
+        selectedKey={selectedLibrary}
+        onChange={(_, option) => {
+          if (option) setSelectedLibrary(option.key as string);
+        }}
+        disabled={loadingLibraries}
+        styles={{ root: { maxWidth: 400, marginBottom: 20 } }}
+      />
 
       <Stack horizontal tokens={{ childrenGap: 10 }}>
         {/* Columna de filtros */}
