@@ -134,36 +134,39 @@ const DocumentoPreview: React.FC<DocumentoPreviewProps> = ({ sp, isOpen, onDismi
   const renderMetadatos = () => {
     if (!metadatos) return <p>No hay metadatos disponibles.</p>;
 
-    const campos = [
-      { key: 'Name', label: 'Nombre' },
-      { key: 'Created', label: 'Creado' },
-      { key: 'Modified', label: 'Modificado' },
-      { key: 'Author', label: 'Creado por' },
-      { key: 'Editor', label: 'Modificado por' },
-      { key: 'ServerRelativeUrl', label: 'Ruta relativa' },
-      { key: 'TimeLastModified', label: 'Última modificación (TimeLastModified)' },
-      { key: 'Length', label: 'Tamaño del archivo en bytes' },
-      { key: 'UniqueId', label: 'GUID' }
-    ];
+  const campos = [
+    { key: 'Name', label: 'Nombre' },
+    { key: 'Created', label: 'Creado' },
+    { key: 'Modified', label: 'Modificado' },
+    { key: 'Author', label: 'Creado por' },
+    { key: 'Editor', label: 'Modificado por' },
+    { key: 'TimeLastModified', label: 'Última modificación' },
+    { key: 'Length', label: 'Tamaño del archivo en bytes' },
+    { key: 'UniqueId', label: 'GUID' },
+    { key: 'ServerRelativeUrl', label: 'Ruta relativa' },
+  ];
 
-    // Dividir campos en 2 columnas, máximo 7 filas por columna
-    const columnas = [campos.slice(0, 7), campos.slice(7)];
-
-    return (
-      <div style={{ display: 'flex', gap: 40, justifyContent: 'center', marginTop: 10 }}>
-        {columnas.map((col, i) => (
-          <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
-            {col.map(c => (
-              <div key={c.key} style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                <span style={{ fontWeight: 600 }}>{c.label}</span>
-                <span style={{ wordBreak: 'break-all', color: '#333' }}>{metadatos[c.key] || '-'}</span>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    );
-  };
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr', // 2 columnas iguales
+        columnGap: 40,
+        rowGap: 16,
+        marginTop: 10
+      }}
+    >
+      {campos.map(c => (
+        <div key={c.key} style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <span style={{ fontWeight: 600 }}>{c.label}</span>
+          <span style={{ wordBreak: 'break-all', color: '#333' }}>
+            {metadatos[c.key] || '-'}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
 
   // =========================
   // RETURN DEL COMPONENTE
@@ -218,7 +221,7 @@ const DocumentoPreview: React.FC<DocumentoPreviewProps> = ({ sp, isOpen, onDismi
         <Stack tokens={{ childrenGap: 10 }} style={{ padding: 20 }}>
           {/* Header del modal de metadatos */}
           <Stack horizontal horizontalAlign="space-between">
-            <h3>Metadatos de {title}</h3>
+            <h3>Metadatos</h3>
             <IconButton iconProps={{ iconName: 'Cancel' }} onClick={() => setMetaModalOpen(false)} />
           </Stack>
 
