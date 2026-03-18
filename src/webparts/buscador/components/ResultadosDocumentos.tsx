@@ -47,18 +47,49 @@ const ResultadosDocumentos: React.FC<IResultadosDocumentosProps> = ({ resultados
 
   // Función para devolver el icono según el tipo de documento
   const getIcon = (tipo?: string) => {
-    const iconStyle = { root: { color: '#d13438', fontSize: 24, width: 24, height: 24 } }; // tamaño fijo
-    switch(tipo) {
+    const iconStyle = { root: { color: '#d13438', fontSize: 24, width: 24, height: 24 } };
+
+    switch(tipo?.toLowerCase()) {
       case 'pdf': 
         return <Icon iconName="PDF" styles={iconStyle} />;
+
       case 'xlsx': 
         return <Icon iconName="ExcelDocument" styles={iconStyle} />;
+
       case 'docx': 
         return <Icon iconName="WordDocument" styles={iconStyle} />;
+
       case 'pptx': 
         return <Icon iconName="PowerPointDocument" styles={iconStyle} />;
+
+      case 'one':
+      case 'onenote':
+        return <Icon iconName="OneNoteLogo" styles={iconStyle} />;
+
+      case 'loop':
+        return <Icon iconName="Loop" styles={iconStyle} />;
+
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+      case 'photo':
+        return <Icon iconName="Photo2" styles={iconStyle} />;
+
+      case 'mp4':
+      case 'avi':
+      case 'mov':
+      case 'video':
+        return <Icon iconName="Video" styles={iconStyle} />;
+
+      case 'html':
+      case 'htm':
+      case 'web':
+      case 'url':
+        return <Icon iconName="Globe" styles={iconStyle} />;
+
       default: 
-        return tipo;
+        return <Icon iconName="Page" styles={iconStyle} />; // fallback bonito
     }
   };
 
