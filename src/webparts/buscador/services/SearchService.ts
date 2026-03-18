@@ -191,7 +191,7 @@ export class SearchService {
         folders
           .filter(f => f.Name !== "Forms")
           .map(async (folder) => {
-            const folderPath = `${parentServerRelativePath}/${folder.Name}`;
+            const folderPath = `${parentPath}/${folder.Name}`;
             const count = await this._contarDocsEnCarpeta(folderPath);
             return { nombre: folder.Name, path: folderPath, count };
           })
